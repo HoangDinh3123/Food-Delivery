@@ -3,7 +3,7 @@
 Before running this project, make sure you have **Node.js** and **npm** installed on your computer.
 
 ## Check if Node.js and npm are installed:
-'''bash
+```bash
   node -v
   npm -v
 
@@ -16,29 +16,29 @@ Once installed, verify again:
 
 ## Getting Started
 ### 1. Clone the Repository
-'''bash
+```bash
   git clone https://github.com/HoangDinh3123/Food-Delivery.git
 
 ### 2. Move into the Project Directory
-'''bash
+```bash
   cd food-delivery
 
 ### 3. Install dependencies
 You can use npm, yarn, or pnpm to install all required packages.
 Using npm
-'''bash
+```bash
   npm install
 
 Using yarn
-'''bash
+```bash
   yarn install
 
 Using pnpm
-'''bash
+```bash
   pnpm install
 
 ### 4. Run the Development Server
-'''bash
+```bash
   npm run dev
 Then open your browser and go to:
   http://localhost:5173
