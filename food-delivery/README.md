@@ -1,44 +1,50 @@
-# food-delivery
+# Prerequisites
 
-This template should help get you started developing with Vue 3 in Vite.
+Before running this project, make sure you have **Node.js** and **npm** installed on your computer.
 
-## Recommended IDE Setup
+## Check if Node.js and npm are installed:
+'''bash
+  node -v
+  npm -v
 
-[VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+If you see version numbers, you already have them installed.
+If not installed, download from: https://nodejs.org/
+Once installed, verify again:
+'''bash
+  node -v
+  npm -v
 
-## Recommended Browser Setup
+## Getting Started
+### 1. Clone the Repository
+'''bash
+  git clone https://github.com/HoangDinh3123/Food-Delivery.git
 
-- Chromium-based browsers (Chrome, Edge, Brave, etc.):
-  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd) 
-  - [Turn on Custom Object Formatter in Chrome DevTools](http://bit.ly/object-formatters)
-- Firefox:
-  - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
-  - [Turn on Custom Object Formatter in Firefox DevTools](https://fxdx.dev/firefox-devtools-custom-object-formatters/)
+### 2. Move into the Project Directory
+'''bash
+  cd food-delivery
 
-## Customize configuration
+### 3. Install dependencies
+You can use npm, yarn, or pnpm to install all required packages.
+Using npm
+'''bash
+  npm install
 
-See [Vite Configuration Reference](https://vite.dev/config/).
+Using yarn
+'''bash
+  yarn install
 
-## Project Setup
+Using pnpm
+'''bash
+  pnpm install
 
-```sh
-npm install
-```
+### 4. Run the Development Server
+'''bash
+  npm run dev
+Then open your browser and go to:
+  http://localhost:5173
 
-### Compile and Hot-Reload for Development
 
-```sh
-npm run dev
-```
 
-### Compile and Minify for Production
 
-```sh
-npm run build
-```
 
-### Lint with [ESLint](https://eslint.org/)
 
-```sh
-npm run lint
-```
