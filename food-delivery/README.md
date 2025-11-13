@@ -11,7 +11,7 @@ Before running this project, make sure you have **Node.js** and **npm** installe
 If you see version numbers, you already have them installed.
 If not installed, download from: https://nodejs.org/
 Once installed, verify again:
-'''bash
+```bash
   node -v
   npm -v
 ```
