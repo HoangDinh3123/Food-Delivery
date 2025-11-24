@@ -5,7 +5,7 @@ phases:
     runtime-versions:
       nodejs: 18
     commands:
-      - cd frontend
+      - cd food-delivery
       - npm install
 
   build:
