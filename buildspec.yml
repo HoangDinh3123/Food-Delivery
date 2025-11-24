@@ -3,16 +3,22 @@ version: 0.2
 phases:
   install:
     runtime-versions:
-      nodejs: 18
+      nodejs: 20
     commands:
-      - cd food-delivery
-      - npm install
+      - echo "Checking repository structure..."
+      - ls -la
+      - cd food-delivery  # If your Vue app is in this folder
+      - echo "Inside food-delivery folder:"
+      - ls -la
+      - npm ci
 
   build:
     commands:
+      - cd food-delivery
       - npm run build
+      - ls -la dist/
 
 artifacts:
   files:
     - '**/*'
-  base-directory: dist
+  base-directory: food-delivery/dist  # Correct path to dist folder
