@@ -41,21 +41,6 @@
                   <i class="fas fa-fire mr-1"></i>{{ foodItem.badge }}
                 </span>
                 <h1 class="text-4xl font-bold text-gray-800 mb-2">{{ foodItem.name }}</h1>
-                <div class="flex items-center gap-4 mb-4">
-                  <div class="flex items-center gap-1">
-                    <i 
-                      v-for="star in 5" 
-                      :key="star"
-                      :class="[
-                        star <= Math.floor(foodItem.rating) ? 'fas fa-star' : 
-                        star === Math.ceil(foodItem.rating) ? 'fas fa-star-half-alt' : 'far fa-star',
-                        'text-yellow-400'
-                      ]"
-                    ></i>
-                    <span class="text-gray-600 font-semibold ml-2">{{ foodItem.rating }}</span>
-                    <span class="text-gray-400 ml-1">({{ foodItem.reviews }} reviews)</span>
-                  </div>
-                </div>
               </div>
               <button class="p-3 hover:bg-gray-100 rounded-full">
                 <i :class="['text-2xl', isFavorite ? 'fas fa-heart text-red-600' : 'far fa-heart text-gray-400']"></i>
@@ -124,60 +109,6 @@
           </div>
         </div>
       </div>
-
-      <!-- Reviews Section -->
-      <section class="mt-16">
-        <h2 class="text-3xl font-bold text-gray-800 mb-8">Customer Reviews</h2>
-        <div class="grid md:grid-cols-2 gap-6">
-          <div 
-            v-for="review in foodItem.customerReviews"
-            :key="review.id"
-            class="bg-white rounded-xl p-6 shadow"
-          >
-            <div class="flex items-start justify-between mb-4">
-              <div class="flex items-center gap-3">
-                <div :class="['w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg', review.avatarColor]">
-                  {{ review.initials }}
-                </div>
-                <div>
-                  <div class="font-bold">{{ review.name }}</div>
-                  <div class="flex items-center gap-1">
-                    <i 
-                      v-for="star in 5" 
-                      :key="star"
-                      :class="[
-                        star <= review.rating ? 'fas fa-star' : 'far fa-star',
-                        'text-yellow-400 text-sm'
-                      ]"
-                    ></i>
-                  </div>
-                </div>
-              </div>
-              <span class="text-gray-400 text-sm">{{ review.date }}</span>
-            </div>
-            <p class="text-gray-600">{{ review.comment }}</p>
-          </div>
-        </div>
-      </section>
-
-      <!-- Related Products -->
-      <section class="mt-16">
-        <h2 class="text-3xl font-bold text-gray-800 mb-8">You Might Also Like</h2>
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <div 
-            v-for="item in relatedItems"
-            :key="item.id"
-            @click="goToDetail(item.id)"
-            class="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition cursor-pointer"
-          >
-            <img :src="item.image" :alt="item.name" class="w-full h-40 object-cover">
-            <div class="p-4">
-              <h3 class="font-bold mb-1">{{ item.name }}</h3>
-              <div class="text-red-600 font-bold">{{ formatPrice(item.price) }}</div>
-            </div>
-          </div>
-        </div>
-      </section>
     </main>
 
     <Footer />
@@ -185,15 +116,17 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useCartStore } from '@/stores/cart'
+import { useMenuStore } from '@/stores/menu'
 import Header from '@/components/Header.vue'
 import Footer from '@/components/Footer.vue'
 
 const route = useRoute()
 const router = useRouter()
 const cartStore = useCartStore()
+const menuStore = useMenuStore()
 
 // State
 const quantity = ref(1)
@@ -203,84 +136,26 @@ const selectedSize = ref({})
 const selectedAddons = ref([])
 
 // Food Item Data (In real app, this would come from API/Store)
-const foodItem = ref({
-  id: 1,
-  name: 'Classic Burger',
-  description: 'Our signature Classic Burger features a juicy 100% beef patty, fresh lettuce, ripe tomatoes, crispy onions, pickles, and our special house sauce. All served on a toasted sesame seed bun.',
-  rating: 4.8,
-  reviews: 256,
-  badge: 'Popular',
-  prepTime: '15-20 min',
-  calories: '650 kcal',
-  protein: '35g',
-  images: [
-    'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=800&h=800&fit=crop',
-    'https://images.unsplash.com/photo-1550547660-d9450f859349?w=200&h=200&fit=crop',
-    'https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=200&h=200&fit=crop',
-    'https://images.unsplash.com/photo-1586190848861-99aa4a171e90?w=200&h=200&fit=crop'
-  ],
-  sizes: [
-    { name: 'Regular', price: 8.99 },
-    { name: 'Large', price: 10.99 },
-    { name: 'X-Large', price: 12.99 }
-  ],
-  addons: [
-    { name: 'Extra Cheese', price: 1.50 },
-    { name: 'Bacon', price: 2.00 },
-    { name: 'Avocado', price: 1.99 }
-  ],
-  customerReviews: [
-    {
-      id: 1,
-      name: 'John Doe',
-      initials: 'JD',
-      avatarColor: 'bg-red-600',
-      rating: 5,
-      date: '2 days ago',
-      comment: 'Absolutely delicious! The burger was cooked to perfection and the ingredients were so fresh. Definitely my new favorite spot for burgers!'
-    },
-    {
-      id: 2,
-      name: 'Sarah Miller',
-      initials: 'SM',
-      avatarColor: 'bg-orange-600',
-      rating: 4,
-      date: '1 week ago',
-      comment: 'Great burger but wish the bun was a bit more toasted. Overall very satisfied with the taste and portion size. Will order again!'
+const foodItem = ref({})
+
+onMounted(async () =>{
+  const foodId = route.params.foodId
+  try{
+    foodItem.value = await menuStore.getMenuItemById(foodId)
+
+    if(!foodItem.value){
+      foodItem.value = await menuStore.fetchMenuItemById(foodId)
     }
-  ]
+
+    if(foodItem.value){
+      mainImage.value = foodItem.value.images[0]
+      selectedSize.value = foodItem.value.sizes[0]
+    }
+  } catch(error){
+    console.error('Error fetching food item:', error)
+  }
 })
 
-const relatedItems = ref([
-  {
-    id: 3,
-    name: 'Crispy Fries',
-    price: 4.99,
-    image: 'https://images.unsplash.com/photo-1606755962773-d324e0a13086?w=300&h=200&fit=crop'
-  },
-  {
-    id: 4,
-    name: 'Spicy Wings',
-    price: 9.99,
-    image: 'https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?w=300&h=200&fit=crop'
-  },
-  {
-    id: 6,
-    name: 'Chocolate Shake',
-    price: 5.99,
-    image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=300&h=200&fit=crop'
-  },
-  {
-    id: 7,
-    name: 'Chicken Nuggets',
-    price: 6.99,
-    image: 'https://images.unsplash.com/photo-1625869016774-3a92be2ae2cd?w=300&h=200&fit=crop'
-  }
-])
-
-// Initialize
-mainImage.value = foodItem.value.images[0]
-selectedSize.value = foodItem.value.sizes[1] // Default to Large
 
 // Computed
 const totalPrice = computed(() => {
@@ -327,10 +202,5 @@ const addToCart = () => {
   cartStore.addItem(cartItem)
   alert(`${cartItem.name} added to cart!`)
   router.push('/cart')
-}
-
-const goToDetail = (id) => {
-  router.push(`/food/${id}`)
-  window.scrollTo(0, 0)
 }
 </script>

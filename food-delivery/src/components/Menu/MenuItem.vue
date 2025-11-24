@@ -5,7 +5,7 @@
   >
     <div class="relative h-56 overflow-hidden">
       <img 
-        :src="item.image" 
+        :src="item.images?.[0] || 'https://via.placeholder.com/300x200'"
         :alt="item.name" 
         class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
       >
@@ -55,6 +55,6 @@ const addToCart = () => {
 }
 
 const goToDetail = () => {
-  router.push(`/food/${props.item.id}`)
+  router.push(`/food/${props.item.foodId}`)
 }
 </script>

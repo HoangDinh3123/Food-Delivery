@@ -170,35 +170,45 @@ const closeModal = () => {
   registerForm.value = { name: '', email: '', phone: '', password: '' }
 }
 
-const handleLogin = () => {
-  const success = userStore.login(loginForm.value.email, loginForm.value.password)
-  if (success) {
-    alert('Login successful!')
-    closeModal()
+const handleLogin = async () => {
+  try{
+    const success = await userStore.login(loginForm.value.email, loginForm.value.password)
+    if (success) {
+      alert('Login successful!')
+      closeModal()
 
-    //redirect to saved path or home
-    if (userStore.redirectPath) {
-      router.push(userStore.redirectPath)
-      userStore.redirectPath = null
+      //redirect to saved path or home
+      if (userStore.redirectPath) {
+        router.push(userStore.redirectPath)
+        useRouter.redirectPath = null
+      }
+    } else {
+      alert('Invalid email or password')
     }
-  } else {
-    alert('Invalid credentials')
+  } catch (error) {
+    console.error('Login error:', error)
+    alert('An error occurred during login. Please try again later.')
   }
 }
 
-const handleRegister = () => {
-  const success = userStore.register(registerForm.value)
-  if (success) {
-    alert('Registration successful!')
-    closeModal()
-
-    //redirect to saved path or home
-    if (userStore.redirectPath) {
-      router.push(userStore.redirectPath)
-      useRouter.redirectPath = null
+const handleRegister = async () => {
+  try {
+    const success = await userStore.register({
+      name: registerForm.value.name,
+      email: registerForm.value.email,
+      phone: registerForm.value.phone,
+      password: registerForm.value.password
+    })
+    if (success) {
+      alert('Registration successful! You can now log in.')
+      showRegister.value = false
+      registerForm.value = { name: '', email: '', phone: '', password: '' }
+    } else {
+      alert('Registration failed. Please try again.')
     }
-  } else {
-    alert('Registration failed')
+  } catch (error) {
+    console.error('Registration error:', error)
+    alert('An error occurred during registration. Please try again later.')
   }
 }
 </script>

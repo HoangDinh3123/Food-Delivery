@@ -224,7 +224,7 @@
                 class="flex gap-3"
               >
                 <img 
-                  :src="item.image" 
+                  :src="item.images?.[0] || 'https://via.placeholder.com/300x200'"
                   :alt="item.name" 
                   class="w-16 h-16 rounded-lg object-cover"
                 >
@@ -258,10 +258,6 @@
               <div class="flex justify-between text-gray-600">
                 <span>Subtotal ({{ cartStore.itemCount }} items)</span>
                 <span class="font-semibold">{{ formatPrice(cartStore.subtotal) }}</span>
-              </div>
-              <div v-if="cartStore.discount > 0" class="flex justify-between text-green-600">
-                <span>Discount (20%)</span>
-                <span class="font-semibold">-{{ formatPrice(cartStore.discount) }}</span>
               </div>
               <div class="flex justify-between text-gray-600">
                 <span>Delivery Fee</span>
@@ -348,22 +344,24 @@ import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useCartStore } from '@/stores/cart'
 import { useOrderStore } from '@/stores/order'
+import { useUserStore } from '@/stores/user'
 import Header from '@/components/Header.vue'
 import Footer from '@/components/Footer.vue'
 
 const router = useRouter()
 const cartStore = useCartStore()
 const orderStore = useOrderStore()
+const userStore = useUserStore()
 
 // State
 const deliveryInfo = ref({
-  firstName: 'Cong Hoang',
-  lastName: 'Dinh',
-  phone: '+1 (xxx) 123-4567',
-  address: 'Durham College',
-  city: 'North Oshawa',
-  state: 'CA',
-  zip: '12345',
+  firstName: '',
+  lastName: '',
+  phone: '',
+  address: '',
+  city: '',
+  state: '',
+  zip: '',
   instructions: ''
 })
 
@@ -378,13 +376,16 @@ const cardInfo = ref({
 const additionalNotes = ref('')
 const deliveryFee = ref(3.99)
 
+//user id
+const userId = computed(() => userStore.userId)
+
 // Computed
 const tax = computed(() => {
-  return (cartStore.subtotal - cartStore.discount) * 0.1
+  return cartStore.subtotal * 0.1
 })
 
 const total = computed(() => {
-  return cartStore.subtotal + deliveryFee.value + tax.value - cartStore.discount
+  return cartStore.subtotal + deliveryFee.value + tax.value
 })
 
 const isFormValid = computed(() => {
@@ -415,27 +416,23 @@ const placeOrder = () => {
 
   // Create order object
   const orderData = {
+    userId: userId.value,
     items: cartStore.items,
     deliveryInfo: deliveryInfo.value,
     paymentMethod: paymentMethod.value,
     subtotal: cartStore.subtotal,
-    discount: cartStore.discount,
     deliveryFee: deliveryFee.value,
     tax: tax.value,
     total: total.value
   }
 
-  // Create order using store
-  const newOrder = orderStore.createOrder(orderData)
-
-  console.log('Order placed:', newOrder)
-
+  orderStore.createOrder(orderData)
 
   // Clear cart
   cartStore.clearCart()
 
   // Redirect to success page
-  alert('Order placed successfully! Order ID: ')
+  alert('Order placed successfully')
   router.push('/')
 }
 </script>

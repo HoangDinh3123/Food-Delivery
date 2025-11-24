@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+import { userAPI } from '@/services/api'
 
 export const useUserStore = defineStore('user', {
   state: () => ({
@@ -8,52 +9,54 @@ export const useUserStore = defineStore('user', {
   }),
   
   getters: {
+    userId: (state) => {
+      return state.user ? state.user.userId : null
+    },
     userName: (state) => {
       return state.user ? state.user.name : 'Guest'
     },
     userEmail: (state) => {
       return state.user ? state.user.email : ''
-    }
+    },
   },
   
   actions: {
-    login(email, password) {
-      // Mock login
-      if (email && password) {
-        this.user = {
-          id: 1,
-          name: 'John Doe',
-          email: email,
-          phone: '+1 (555) 123-4567',
-          address: '123 Main Street'
+    async login(email, password) {
+      try {
+        const response = await userAPI.login(email, password)
+        if (!response || response.error) {
+          throw new Error(response ? response.error : 'Login failed')
         }
+
+        this.user = response.user
         this.isAuthenticated = true
-        
         // Save to localStorage
         localStorage.setItem('user', JSON.stringify(this.user))
         localStorage.setItem('isAuthenticated', 'true')
-        
+
         return true
+      } catch (error) {
+        throw error
       }
-      return false
     },
     
-    register(userData) {
-      // Mock register
-      this.user = {
-        id: Date.now(),
-        name: userData.name,
-        email: userData.email,
-        phone: userData.phone || '',
-        address: userData.address || ''
+    async register(userData) {
+      try {
+        const response = await userAPI.register(userData)
+        if (!response || response.error) {
+          throw new Error(response ? response.error : 'Registration failed')
+        }
+
+        this.user = response.user
+        this.isAuthenticated = true
+
+        // Save to localStorage
+        localStorage.setItem('user', JSON.stringify(this.user))
+        localStorage.setItem('isAuthenticated', 'true')
+        return true
+      } catch (error) {
+        throw error
       }
-      this.isAuthenticated = true
-      
-      // Save to localStorage
-      localStorage.setItem('user', JSON.stringify(this.user))
-      localStorage.setItem('isAuthenticated', 'true')
-      
-      return true
     },
     
     logout() {

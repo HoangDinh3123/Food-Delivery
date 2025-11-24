@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+import { orderAPI } from '@/services/api'
 
 export const useOrderStore = defineStore('order', {
   state: () => ({
@@ -36,15 +37,25 @@ export const useOrderStore = defineStore('order', {
   },
   
   actions: {
+    async fetchOrdersByUserId(userId) {
+      try {
+        const response = await orderAPI.getOrdersByUserId(userId)
+        this.orders = response.orders || []
+        return this.orders
+      } catch (error) {
+        console.error('Error fetching orders:', error)
+        return []
+      }
+    },
+
     // Create new order
-    createOrder(orderData) {
+    async createOrder(orderData) {
       const newOrder = {
-        id: 'ORD-' + Date.now(),
+        userId: orderData.userId,
         items: orderData.items,
         deliveryInfo: orderData.deliveryInfo,
         paymentMethod: orderData.paymentMethod,
         subtotal: orderData.subtotal,
-        discount: orderData.discount || 0,
         deliveryFee: orderData.deliveryFee,
         tax: orderData.tax,
         total: orderData.total,
@@ -53,14 +64,12 @@ export const useOrderStore = defineStore('order', {
         updatedAt: new Date().toISOString()
       }
       
+      const response = await orderAPI.createOrder(newOrder)
       // Add to beginning of array (newest first)
-      this.orders.unshift(newOrder)
-      this.currentOrder = newOrder
+      this.orders.unshift(response.order)
+      this.currentOrder = response.order
       
-      // Save to localStorage
-      this.saveToLocalStorage()
-      
-      return newOrder
+      return this.currentOrder
     },
     
     // Update order status
@@ -91,33 +100,11 @@ export const useOrderStore = defineStore('order', {
       return false
     },
     
-    // Load orders from localStorage
-    loadFromLocalStorage() {
-      const savedOrders = localStorage.getItem('orders')
-      if (savedOrders) {
-        try {
-          this.orders = JSON.parse(savedOrders)
-        } catch (error) {
-          console.error('Error loading orders:', error)
-          this.orders = []
-        }
-      }
-    },
-    
-    // Save orders to localStorage
-    saveToLocalStorage() {
-      try {
-        localStorage.setItem('orders', JSON.stringify(this.orders))
-      } catch (error) {
-        console.error('Error saving orders:', error)
-      }
-    },
     
     // Clear all orders
     clearAllOrders() {
       this.orders = []
       this.currentOrder = null
-      localStorage.removeItem('orders')
     }
   }
 })

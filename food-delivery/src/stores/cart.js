@@ -3,8 +3,6 @@ import { defineStore } from 'pinia'
 export const useCartStore = defineStore('cart', {
   state: () => ({
     items: [],
-    promoCode: null,
-    discount: 0
   }),
   
   getters: {
@@ -24,13 +22,13 @@ export const useCartStore = defineStore('cart', {
       )
       const deliveryFee = 3.99
       const tax = subtotal * 0.1
-      return subtotal + deliveryFee + tax - state.discount
+      return subtotal + deliveryFee + tax
     }
   },
   
   actions: {
     addItem(item) {
-      const existingItem = this.items.find(i => i.id === item.id)
+      const existingItem = this.items.find(i => i.foodId === item.foodId)
       
       if (existingItem) {
         existingItem.quantity++
@@ -40,33 +38,21 @@ export const useCartStore = defineStore('cart', {
     },
     
     removeItem(itemId) {
-      const index = this.items.findIndex(i => i.id === itemId)
+      const index = this.items.findIndex(i => i.itemId === itemId)
       if (index > -1) {
         this.items.splice(index, 1)
       }
     },
     
     updateQuantity(itemId, quantity) {
-      const item = this.items.find(i => i.id === itemId)
+      const item = this.items.find(i => i.itemId === itemId)
       if (item && quantity > 0) {
-        console.log(quantity)
         item.quantity = quantity
       }
     },
     
-    applyPromoCode(code) {
-      if (code === 'QUICKBITE20') {
-        this.promoCode = code
-        this.discount = this.subtotal * 0.2
-        return true
-      }
-      return false
-    },
-    
     clearCart() {
       this.items = []
-      this.promoCode = null
-      this.discount = 0
     }
   }
 })

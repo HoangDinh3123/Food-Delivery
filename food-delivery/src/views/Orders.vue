@@ -54,7 +54,7 @@
             <div class="flex flex-wrap items-center justify-between gap-4">
               <div>
                 <div class="flex items-center gap-3 mb-2">
-                  <h3 class="text-xl font-bold text-gray-800">Order #{{ order.id }}</h3>
+                  <h3 class="text-xl font-bold text-gray-800">Order #{{ order.orderId }}</h3>
                   <span :class="getStatusBadgeClass(order.status)">
                     <i :class="getStatusIcon(order.status) + ' mr-1'"></i>
                     {{ getStatusLabel(order.status) }}
@@ -90,7 +90,7 @@
                   class="flex gap-4 p-3 bg-gray-50 rounded-lg"
                 >
                   <img 
-                    :src="item.image" 
+                    :src="item.images?.[0] || 'https://via.placeholder.com/300x200'"
                     :alt="item.name" 
                     class="w-16 h-16 rounded-lg object-cover"
                   >
@@ -148,12 +148,14 @@ import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useCartStore } from '@/stores/cart'
 import { useOrderStore } from '@/stores/order'
+import { useUserStore } from '@/stores/user'
 import Header from '@/components/Header.vue'
 import Footer from '@/components/Footer.vue'
 
 const router = useRouter()
 const cartStore = useCartStore()
 const orderStore = useOrderStore()
+const userStore = useUserStore()
 
 // State
 const activeFilter = ref('all')
@@ -170,6 +172,9 @@ const filterTabs = [
 const filteredOrders = computed(() => {
   return orderStore.ordersByStatus(activeFilter.value)
 })
+
+//user id
+const userId = computed(() => userStore.userId)
 
 // Methods
 const formatPrice = (price) => {
@@ -225,7 +230,7 @@ const goToHome = () => {
 }
 
 // load orders when component mounts
-onMounted(() => {
-  orderStore.loadFromLocalStorage()
+onMounted(async () => {
+  await orderStore.fetchOrdersByUserId(userId.value)
 })
 </script>
