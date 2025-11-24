@@ -16,7 +16,6 @@ phases:
 
   pre_build:
     commands:
-      - cd food-delivery
       - echo "Node version:"
       - node --version
       - echo "NPM version:"
@@ -24,7 +23,6 @@ phases:
 
   build:
     commands:
-      - cd food-delivery
       - echo "Building production files..."
       - npm run build
       - echo "Build complete!"
@@ -32,7 +30,6 @@ phases:
 
   post_build:
     commands:
-      - cd food-delivery
       - echo "Dist folder contents:"
       - ls -la dist/
 
