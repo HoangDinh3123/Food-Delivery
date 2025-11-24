@@ -81,7 +81,7 @@ const router = useRouter()
 const cartStore = useCartStore()
 const userStore = useUserStore()
 
-const appName = 'Group 6'
+const appName = 'Group 6-v2'
 const showUserMenu = ref(false)
 const showLoginModal = ref(false)
 
