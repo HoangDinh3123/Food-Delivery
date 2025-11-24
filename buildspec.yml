@@ -10,7 +10,8 @@ phases:
 
   build:
     commands:
-      - npm run build
+      - echo "Starting build..."
+      - npm run build || { echo "Build failed"; exit 1; }
 
 artifacts:
   files:
